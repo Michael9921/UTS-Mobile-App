@@ -2,6 +2,7 @@ package com.example.umnlife
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 
@@ -9,12 +10,19 @@ import androidx.appcompat.app.AppCompatActivity
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+        if(intent.getStringExtra("char") != null && intent.getStringExtra("name") != null){
+            val Intent =  Intent(this, ActivityInGame::class.java);
+            startActivity(Intent)
+        }
+
         setContentView(R.layout.activity_main)
 
         val charImage1: ImageView = findViewById(R.id.character1)
         val charImage2: ImageButton = findViewById(R.id.img_button1)
         val charImage3: ImageButton = findViewById(R.id.img_button2)
         val charImage4: ImageButton = findViewById(R.id.img_button3)
+        val input: EditText = findViewById(R.id.input_name)
 
         charImage1.setImageResource(R.drawable.char1)
         charImage1.setTag(R.drawable.char1)
@@ -30,10 +38,11 @@ class MainActivity : AppCompatActivity() {
         charImage4.setOnClickListener{switchChar(R.id.img_button3)}
 
         val buttonSubmit: Button = findViewById(R.id.button)
-        buttonSubmit.setOnClickListener { nextActifity() }
+        buttonSubmit.setOnClickListener { nextActifity(charImage1.getTag().toString() , input.text.toString()) }
     }
 
-    private fun nextActifity() {
+    private fun nextActifity(char: String,  name: String) {
+
         val inputName: EditText = findViewById(R.id.input_name)
         val stringInTextField: String = inputName.text.toString()
         if(stringInTextField.isEmpty()){
@@ -41,8 +50,11 @@ class MainActivity : AppCompatActivity() {
                 Toast.LENGTH_SHORT)
             toast.show()
         }else{
-            val i =  Intent(this, InGameActivity::class.java);
-            startActivity(i);
+            val Intent =  Intent(this, ActivityInGame::class.java);
+            Intent.putExtra("char", char.toString())
+            Intent.putExtra("name", name.toString())
+            startActivity(Intent)
+
         }
     }
 
