@@ -1,14 +1,12 @@
 package com.example.umnlife
 
-import android.app.Activity
-import android.app.ProgressDialog.show
 import android.content.Context
 import android.view.Gravity
 import android.widget.TextView
 import android.widget.Toast
 
 class SalamToast(context: Context?) : Toast(context) {
-    fun showCustomToast(message: String, activity: Activity)
+    fun showCustomToast(message: String, activity: ActivityInGame)
     {
         val layout = activity.layoutInflater.inflate (
             R.layout.toast_salam,

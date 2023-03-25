@@ -54,7 +54,6 @@ class MainActivity : AppCompatActivity() {
             Intent.putExtra("char", char.toString())
             Intent.putExtra("name", name.toString())
             startActivity(Intent)
-
         }
     }
 
