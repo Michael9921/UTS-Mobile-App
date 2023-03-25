@@ -7,15 +7,15 @@
 
     <ImageView
         android:id="@+id/baground_innerGame"
-        android:scaleType = "centerCrop"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
+        app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/ic_launcher_background" />
 
     <ImageView
@@ -47,10 +47,12 @@
 
             <TextView
                 android:id="@+id/textView4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="80dp"
+                android:layout_height="20dp"
                 android:layout_gravity="center"
-                android:text="Tidur" />
+                android:gravity="center"
+                android:text="Tidur"
+                android:background="@color/material_dynamic_neutral80"/>
 
             <LinearLayout
                 android:id="@+id/linearLayout4"
@@ -66,6 +68,7 @@
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     app:srcCompat="@android:drawable/btn_star"
+
                     android:contentDescription="buttonTidur" />
 
                 <ProgressBar
@@ -88,8 +91,11 @@
 
             <TextView
                 android:id="@+id/textView3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+
+                android:layout_width="80dp"
+                android:layout_height="20dp"
+                android:gravity="center"
+                android:background="@color/material_dynamic_neutral80"
                 android:layout_gravity="center"
                 android:layout_weight="1"
                 android:text="Makan" />
@@ -130,10 +136,12 @@
 
             <TextView
                 android:id="@+id/textView5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="80dp"
+                android:layout_height="20dp"
+                android:gravity="center"
                 android:layout_gravity="center"
                 android:layout_weight="1"
+                android:background="@color/material_dynamic_neutral80"
                 android:text="Senang" />
 
             <LinearLayout
@@ -168,9 +176,12 @@
 
     <TextView
         android:id="@+id/semester"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:text="Semester 1"
+        android:gravity="center"
+        android:textSize="15dp"
+        android:background="@color/material_dynamic_neutral80"
         app:layout_constraintBottom_toTopOf="@+id/character"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.499"
@@ -190,9 +201,11 @@
 
         <TextView
             android:id="@+id/name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Name" />
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:gravity="center"
+            android:text="Name"
+            android:background="@color/material_dynamic_neutral80"/>
 
         <ProgressBar
             android:id="@+id/barBelajar"
@@ -213,18 +226,24 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.129">
+        app:layout_constraintVertical_bias="0.316">
 
         <TextView
             android:id="@+id/textView6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Jam " />
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:background="@color/material_dynamic_neutral80"
+            android:gravity="center"
+            android:text="Jam "
+            android:textColor="@color/black" />
 
         <TextView
             android:id="@+id/jam"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:background="@color/material_dynamic_neutral80"
+            android:gravity="center"
             android:text="12 : 00 : 00" />
     </LinearLayout>
 
@@ -233,9 +252,29 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="36dp"
-        android:layout_marginBottom="40dp"
-        android:text="Button"
+        android:layout_marginBottom="36dp"
+        android:text="Belajar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:id="@+id/imageButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_info_details" />
+
+    <ImageButton
+        android:id="@+id/imageButton2"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
+        app:layout_constraintStart_toEndOf="@+id/imageButton"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_input_get" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

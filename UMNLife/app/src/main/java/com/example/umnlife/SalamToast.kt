@@ -20,7 +20,7 @@ class SalamToast(context: Context?) : Toast(context) {
         // use the application extension function
         this.apply {
             setGravity(Gravity.BOTTOM, 0, 40)
-            duration = Toast.LENGTH_LONG
+            duration = Toast.LENGTH_SHORT
             view = layout
             show()
         }

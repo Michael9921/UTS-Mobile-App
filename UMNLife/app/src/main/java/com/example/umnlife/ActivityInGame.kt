@@ -1,6 +1,7 @@
 package com.example.umnlife
 
 
+import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -8,6 +9,7 @@ import android.os.Looper
 import android.view.View
 import android.widget.Toast
 import com.example.umnlife.TimerService.Companion.resetTimeOut
+import com.example.umnlife.TimerService.Companion.setTimeout
 import com.example.umnlife.databinding.ActivityInGameBinding
 import java.util.*
 
@@ -16,7 +18,7 @@ class ActivityInGame: AppCompatActivity() {
     protected var handler = Handler(Looper.getMainLooper())
     private var time = 0
     private var hours = 0
-    val timer = Timer()
+    private val timer = Timer()
     private var progressMakan = 50
     private var progressTidur = 50
     private var progressMain = 50
@@ -24,6 +26,9 @@ class ActivityInGame: AppCompatActivity() {
     private var study = Handler()
     private val waktuDo = TimerService()
     private var semester = 1
+    private var mMediaPlayer: MediaPlayer? = null
+    private var timeDesc = "Selamat Malam";
+    private var char:Int = 0;
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -100,7 +105,7 @@ class ActivityInGame: AppCompatActivity() {
             }
         },5000)
 
-        waktuDo.setTimeout({Toast.makeText(this, "Kamu DI DO", Toast.LENGTH_LONG).show()},10000)
+        waktuDo.setTimeout({Toast.makeText(this, "Kamu DI DO", Toast.LENGTH_LONG).show()},60000)
 
         binding.button2.setOnClickListener{
             onStudy(this.waktuDo)
@@ -109,6 +114,17 @@ class ActivityInGame: AppCompatActivity() {
         binding.buttonMakan.setOnClickListener{onMakan()}
         binding.buttonTidur.setOnClickListener{onTidur()}
 
+    }
+
+    fun playSound(source: Int) {
+        if (mMediaPlayer != null){
+            mMediaPlayer!!.release()
+            mMediaPlayer = null
+        }
+
+        mMediaPlayer = MediaPlayer.create(this, source)
+        mMediaPlayer!!.isLooping = true
+        mMediaPlayer!!.start()
     }
 
     fun onMain(){
@@ -124,12 +140,14 @@ class ActivityInGame: AppCompatActivity() {
     fun onTidur(){
         progressTidur+=30
         binding.barTidur.setProgress(progressTidur)
+        binding.character.setImageResource(R.drawable.char1tidur)
+        TimerService.setTimeout({binding.character.setImageResource(char)},3000)
     }
     fun onStudy(waktuDo : TimerService){
         progressBljr+=20
         binding.barBelajar.setProgress(progressBljr)
         waktuDo.resetTimeOut()
-        waktuDo.setTimeout({Toast.makeText(this, "Kamu DI DO", Toast.LENGTH_LONG).show()},10000)
+        waktuDo.setTimeout({Toast.makeText(this, "Kamu DI DO", Toast.LENGTH_LONG).show()},60000)
         if (progressBljr >= 100){
             progressBljr = 0
             semester++
@@ -139,7 +157,7 @@ class ActivityInGame: AppCompatActivity() {
 
     fun defaultValue(){
         val getChar: Int = intent.getStringExtra("char")?.toInt() ?: R.drawable.char4
-
+        char = getChar
         val refChar = when(getChar){
             R.drawable.char1 -> R.drawable.char1
             R.drawable.char2 -> R.drawable.char2
@@ -151,38 +169,45 @@ class ActivityInGame: AppCompatActivity() {
         val geName: String? = intent.getStringExtra("name")
         binding.name.setText(geName)
         binding.bagroundInnerGame.setImageResource(R.drawable.bgmalam)
-        SalamToast(this).showCustomToast("Malam",this)
-    }
-
-    override fun onPause() {
-        super.onPause()
+        SalamToast(this).showCustomToast("Selamat Malam",this)
+        playSound(R.raw.musikmalam)
     }
 
     private fun tampilWaktu(){
         var Salam:String;
         var bg:Int;
-        when(time){
+        var sound:Int;
+        when(time/60){
             in 1 until 10 -> {
-                Salam ="Pagi"
+                Salam ="Selamat Pagi"
                 bg = R.drawable.bgpagi
+                sound = R.raw.musikpagi
             }
             in 10 until 14 -> {
-                Salam = "Siang"
+                Salam = "Selamat Siang"
                 bg = R.drawable.bgsiang
+                sound = R.raw.musiksiang
             }
             in 14 until 16 -> {
-                Salam = "Sore"
+                Salam = "Selamat Sore"
                 bg = R.drawable.bgsore
+                sound = R.raw.musiksore
             }
             else -> {
-                Salam = "Malam"
+                Salam = "Selamat Malam"
                 bg = R.drawable.bgmalam
+                sound = R.raw.musikmalam
             }
         }
         if(time/60 != this.hours){
             binding.bagroundInnerGame.setImageResource(bg)
             SalamToast(this).showCustomToast(Salam,this)
             this.hours = time/60
+
+            if(timeDesc != Salam){
+                playSound(sound)
+                timeDesc = Salam
+            }
         }
     }
 }
