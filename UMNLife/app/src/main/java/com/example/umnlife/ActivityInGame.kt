@@ -31,6 +31,7 @@ class ActivityInGame: AppCompatActivity() {
     private var putarWaktu = TimerService()
     private var saveData: SharedPreferences.Editor? = null
     private var getSaveData: SharedPreferences? = null
+    private var saveFlag = true;
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
@@ -74,6 +75,15 @@ class ActivityInGame: AppCompatActivity() {
             }
         }
         binding.buttonTidur.setOnClickListener{clickFUnc.onTidur{ plusTime(480) }}
+
+        binding.imageButtonInfo.setOnClickListener {
+            saveData = getSharedPreferences("dataGame", MODE_PRIVATE).edit()
+            saveData?.clear()
+            saveData?.apply()
+            saveFlag = false
+            val Intent =  Intent(this, MainActivity::class.java);
+            startActivity(Intent)
+        }
     }
 
     private fun countDownDO() {
@@ -209,14 +219,17 @@ class ActivityInGame: AppCompatActivity() {
         clickFUnc.waktuMakan.resetInterval()
         mMediaPlayer!!.release()
         mMediaPlayer = null
-        saveData?.putInt("MAKAN", clickFUnc.progressMakan)
-        saveData?.putInt("MAIN", clickFUnc.progressMain)
-        saveData?.putInt("BLJR", clickFUnc.progressBljr)
-        saveData?.putInt("TIDUR", clickFUnc.progressTidur)
-        saveData?.putInt("TIME", time)
-        saveData?.putInt("SEMESTER", clickFUnc.semester)
-        saveData?.putInt("CHAR", char)
-        saveData?.putString("NAMA", name)
-        saveData?.apply()
+        if(saveFlag){
+            saveData?.putInt("MAKAN", clickFUnc.progressMakan)
+            saveData?.putInt("MAIN", clickFUnc.progressMain)
+            saveData?.putInt("BLJR", clickFUnc.progressBljr)
+            saveData?.putInt("TIDUR", clickFUnc.progressTidur)
+            saveData?.putInt("TIME", time)
+            saveData?.putInt("SEMESTER", clickFUnc.semester)
+            saveData?.putInt("CHAR", char)
+            saveData?.putString("NAMA", name)
+            saveData?.apply()
+        }
+
     }
 }

@@ -111,6 +111,7 @@ class onClickHandler(val binding: ActivityInGameBinding, val char: Int, val cont
 
     fun onMakan(){
         plusMakan()
+        plusMain()
         binding.character.setImageResource(charMakan)
         TimerService.setTimeout({binding.character.setImageResource(char)},3000)
     }
