@@ -1,6 +1,7 @@
 package com.example.umnlife
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.widget.*
@@ -11,17 +12,17 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
-        if(intent.getStringExtra("char") != null && intent.getStringExtra("name") != null){
+        setContentView(R.layout.activity_main)
+
+        if(getSharedPreferences("dataGame", MODE_PRIVATE).contains("NAMA")){
             val Intent =  Intent(this, ActivityInGame::class.java);
             startActivity(Intent)
         }
 
-        setContentView(R.layout.activity_main)
 
         val charImage1: ImageView = findViewById(R.id.character1)
         val charImage2: ImageButton = findViewById(R.id.img_button1)
         val charImage3: ImageButton = findViewById(R.id.img_button2)
-        val charImage4: ImageButton = findViewById(R.id.img_button3)
         val input: EditText = findViewById(R.id.input_name)
 
         charImage1.setImageResource(R.drawable.char1)
@@ -30,15 +31,12 @@ class MainActivity : AppCompatActivity() {
         charImage2.setTag(R.drawable.char2)
         charImage3.setImageResource(R.drawable.char3)
         charImage3.setTag(R.drawable.char3)
-        charImage4.setImageResource(R.drawable.char4)
-        charImage4.setTag(R.drawable.char4)
 
         charImage2.setOnClickListener{switchChar(R.id.img_button1)}
         charImage3.setOnClickListener{switchChar(R.id.img_button2)}
-        charImage4.setOnClickListener{switchChar(R.id.img_button3)}
 
         val buttonSubmit: Button = findViewById(R.id.button)
-        buttonSubmit.setOnClickListener { nextActifity(charImage1.getTag().toString() , input.text.toString()) }
+        buttonSubmit.setOnClickListener { nextActifity(charImage1.getTag().toString(), input.text.toString()) }
     }
 
     private fun nextActifity(char: String,  name: String) {

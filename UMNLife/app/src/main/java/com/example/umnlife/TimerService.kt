@@ -5,6 +5,10 @@ import java.util.*
 
 
 class TimerService(){
+    private var timer: Timer? = null
+    private var handler: Handler? = null
+    private var runnable: Runnable? = null
+
     fun setTimeout(func: ()-> Unit, delay: Long) {
         resetTimeOut()
         handler = Handler()
@@ -18,6 +22,20 @@ class TimerService(){
         handler?.removeCallbacks(runnable!!)
     }
 
+    private class TimeTask(private var func: ()-> Unit):TimerTask() {
+        override fun run() {
+            func()
+        }
+    }
+    fun setInterval(func: ()-> Unit,interval: Long) {
+        timer = Timer()
+        timer?.scheduleAtFixedRate(TimeTask(func), 0, interval)
+    }
+    fun resetInterval(){
+        timer?.cancel()
+        timer?.purge()
+        timer = null
+    }
 
     companion object {
         private val timer = Timer()

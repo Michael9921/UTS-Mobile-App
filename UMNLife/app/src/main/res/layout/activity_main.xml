@@ -30,18 +30,6 @@
         app:layout_constraintTop_toBottomOf="@+id/img_button1"
         tools:srcCompat="@drawable/char2" />
 
-    <ImageButton
-        android:id="@+id/img_button3"
-        android:layout_width="66dp"
-        android:layout_height="71dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:tag="@drawable/char3"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/img_button2"
-        android:scaleType="fitCenter"
-        tools:srcCompat="@drawable/char3" />
-
     <Button
         android:id="@+id/button"
         android:layout_width="wrap_content"
