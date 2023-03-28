@@ -1,12 +1,16 @@
 package com.example.umnlife
 
-import android.content.Context.MODE_PRIVATE
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.SharedPreferences
 import android.media.MediaPlayer
+import android.os.Build
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
-import android.widget.Toast
+import android.view.ViewGroup
+import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.example.umnlife.databinding.ActivityInGameBinding
 
@@ -32,6 +36,8 @@ class ActivityInGame: AppCompatActivity() {
     private var saveData: SharedPreferences.Editor? = null
     private var getSaveData: SharedPreferences? = null
     private var saveFlag = true;
+
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
@@ -67,14 +73,49 @@ class ActivityInGame: AppCompatActivity() {
 
         }
 
-        binding.button2.setOnClickListener{
+        binding.buttonBljr.setOnClickListener{
             clickFUnc.onStudy(this.waktuDo)
             if(clickFUnc.progressBljr == 0){
                 val intent =  Intent(this, ActivityQuiz::class.java)
                 startActivity(intent)
             }
         }
-        binding.buttonTidur.setOnClickListener{clickFUnc.onTidur{ plusTime(480) }}
+
+
+
+        binding.buttonTidur.setOnClickListener{
+            binding.viewPopUp.visibility = View.VISIBLE
+            Frezze()
+            val popupWindow = PopupWindow(this)
+            val viewPopUp = layoutInflater.inflate(R.layout.popup_alaram_tidur, null) // inflate a new instance
+            popupWindow.contentView = viewPopUp
+
+            val languages = resources.getStringArray(R.array.time_alaram_array)
+            val adapterItems = ArrayAdapter(this, R.layout.listitems, languages)
+            val autoInput: AutoCompleteTextView = viewPopUp.findViewById(R.id.editTextNumberDecimal)
+            autoInput.setAdapter(adapterItems)
+
+            val btnAlrm: Button? = viewPopUp.findViewById(R.id.button_alaram)
+            val btnCancle : ImageButton? = viewPopUp.findViewById(R.id.button_cancle)
+
+            btnCancle?.setOnClickListener({
+                popupWindow.dismiss()
+                binding.viewPopUp.visibility = View.GONE
+                goAgain()
+            })
+
+            btnAlrm?.setOnClickListener {
+                popupWindow.dismiss()
+                binding.viewPopUp.visibility = View.GONE
+                time = (60 * (autoInput.text.toString().toIntOrNull() ?: 0))
+                clickFUnc.onTidur()
+                goAgain()
+            }
+
+            // remove the view from its parent if it has one
+            (viewPopUp.parent as? ViewGroup)?.removeView(viewPopUp)
+            popupWindow.showAtLocation(binding.root, Gravity.CENTER, 0, 0)
+        }
 
         binding.imageButtonInfo.setOnClickListener {
             saveData = getSharedPreferences("dataGame", MODE_PRIVATE).edit()
@@ -192,13 +233,25 @@ class ActivityInGame: AppCompatActivity() {
         outState.putInt(KEY_CHAR, char)
     }
 
-    override fun onStart() {
-        super.onStart()
+    fun goAgain(){
         waktuJalan()
         countDownDO()
         clickFUnc.intervalMakan()
         clickFUnc.intervalMain()
         clickFUnc.intevalTidur()
+    }
+
+    fun Frezze(){
+        putarWaktu.resetInterval()
+        waktuDo.resetTimeOut()
+        clickFUnc.waktuMain.resetInterval()
+        clickFUnc.waktuTidur.resetInterval()
+        clickFUnc.waktuMakan.resetInterval()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        goAgain()
         if(intent.getBooleanExtra("jawaban", false) != null && intent.getBooleanExtra("jawaban",false)){
                 clickFUnc.semester+=1
                 binding.semester.setText(String.format("Semester %d", clickFUnc.semester))
@@ -212,11 +265,7 @@ class ActivityInGame: AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         saveData = getSharedPreferences("dataGame", MODE_PRIVATE).edit()
-        putarWaktu.resetInterval()
-        waktuDo.resetTimeOut()
-        clickFUnc.waktuMain.resetInterval()
-        clickFUnc.waktuTidur.resetInterval()
-        clickFUnc.waktuMakan.resetInterval()
+        Frezze()
         mMediaPlayer!!.release()
         mMediaPlayer = null
         if(saveFlag){

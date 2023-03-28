@@ -116,8 +116,7 @@ class onClickHandler(val binding: ActivityInGameBinding, val char: Int, val cont
         TimerService.setTimeout({binding.character.setImageResource(char)},3000)
     }
 
-    fun onTidur(time:()-> Unit){
-        time()
+    fun onTidur(){
         plusTidur()
         minMakan()
         binding.character.setImageResource(charTidur)
@@ -154,7 +153,7 @@ class onClickHandler(val binding: ActivityInGameBinding, val char: Int, val cont
     }
 
     fun plusTidur(){
-        progressTidur+=50
+        progressTidur+=60
         if(progressTidur > 100) progressTidur = 100
         binding.barTidur.setProgress(progressTidur)
     }
