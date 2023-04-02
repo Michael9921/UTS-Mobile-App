@@ -4,6 +4,13 @@ UMN Life
 merupakan aplikasi simulasi permainan kehidupan yang dapat dimainkan pada perangkat mobile, dan aplikasi ini berbasis offline.
 Pemain pada game ini harus bertahan hidup hingga menyelesaikan perkuliahan hingga semester 8.
 
+Nama Kelompok : Gas aj dulu
+Nama anggota:
+1. 00000042678 - Michael Christian Dharmawan
+2. 00000044537- Kevin Fernando Wijaya Sumargo
+3. 00000044665 - Farren Yazid Pasha
+4. 000000055136 - Koong Hiap
+
 FITUR TAMBAHAN
 - Quiz
 - Save Data
