@@ -165,7 +165,15 @@ class ActivityInGame: AppCompatActivity() {
 
     private fun countDownDO() {
         waktuDo.setTimeout({ Toast.makeText(this, "Kamu akan di DO jika tidak belajar", Toast.LENGTH_LONG).show()},30000)
-        waktuAlertDo.setTimeout({ Toast.makeText(this, "Kamu DI DO", Toast.LENGTH_LONG).show()},60000)
+        waktuAlertDo.setTimeout(
+            {
+                saveData?.clear()
+                saveData?.apply()
+                saveFlag = false
+                val intent =  Intent(this, Kalah::class.java)
+                intent.putExtra("alasan", "Kamu di DO karena tidak belajar")
+                startActivity(intent)
+            },60000)
     }
 
     private fun waktuJalan() {
