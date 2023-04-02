@@ -22,6 +22,13 @@ Status:
 - Ketika pemain melakukan aktifitas belajar, maka status senang dan makan akan berkurang karena belajar membutuhkan tenaga, dan membuat pemain capek.
 ![Screenshot 2023-04-02 160234](https://user-images.githubusercontent.com/98584656/229343160-5940f3f6-575e-4f27-9da5-47bd97891b31.png)
 
+- Ketika status berkurang sampai 20% maka akan ditampilkan alert yang menyatakan kondisi pemain
+- Jika pemain tidak melakukan belajar selama 30 detik maka akan ditampilkan alert bahwa kalau tidak belajar maka akan di DO
+- Jika pemain tidak belajar sampai 60 detik maka pemain akan di DO dan pemain akan kalah
+![Screenshot 2023-04-02 161431](https://user-images.githubusercontent.com/98584656/229343930-06bcd9cf-bc0a-499f-9a8e-41c8fb1398dc.png)
+![image](https://user-images.githubusercontent.com/98584656/229344343-67d9447b-94fb-49d3-b8b8-53583e4a062e.png)
+
+
 Belajar:
 - ketika pemain telah belajar sampai bar status belajar penuh maka akan diberikan quiz untuk dapat naik pada semester berikutnya
 - jika jawaban quiz salah maka status belajar akan kembali 0 dan semester tidak akan bertambah
@@ -30,6 +37,8 @@ Belajar:
 Tidur:
 - jika pemain ingin tidur maka akan diberikan popup seperti gambar dibawah
 - jika popup muncul status dan jam akan diam, jika popup tidak diisi jam nya maka akan dibatalkan perintah tidur
-![Screenshot 2023-04-02 160234](https://user-images.githubusercontent.com/98584656/229343160-5940f3f6-575e-4f27-9da5-47bd97891b31.png)
+![image](https://user-images.githubusercontent.com/98584656/229343853-eeec42e4-fce8-452f-b1e7-d9c2311f701a.png)
+
+
 
 
