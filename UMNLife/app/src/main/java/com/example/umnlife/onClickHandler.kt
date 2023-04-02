@@ -4,10 +4,11 @@ import android.app.Activity
 import android.content.ClipData.newIntent
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.widget.Toast
 import com.example.umnlife.databinding.ActivityInGameBinding
 
-class onClickHandler(val binding: ActivityInGameBinding, val char: Int, val context: Context?): Activity() {
+class onClickHandler(val binding: ActivityInGameBinding, val char: Int, val context: Context): Activity() {
     public var semester = 1
     public var progressMakan = 50
     public var progressTidur = 50
@@ -25,29 +26,28 @@ class onClickHandler(val binding: ActivityInGameBinding, val char: Int, val cont
     public var waktuBelajar = TimerService()
     public var waktuMakan = TimerService()
     public var waktuTidur = TimerService()
+    private var toast = Toast.makeText(context, "", Toast.LENGTH_SHORT);
+    var saveFlag = true
 
     init{
-        binding.buttonMain.setOnClickListener{onMain()}
-        binding.buttonMakan.setOnClickListener{onMakan()}
-
         when(char){
             R.drawable.char1 -> {
                 this.charTidur = R.drawable.char1tidur
                 this.charMakan = R.drawable.char1makan
-                this.charBljr = R.drawable.char1
-                this.charMain = R.drawable.char1
+                this.charBljr = R.drawable.char1belajar
+                this.charMain = R.drawable.char1main
             }
             R.drawable.char2 ->{
                 this.charTidur = R.drawable.char2tidur
                 this.charMakan = R.drawable.char2makan
-                this.charBljr = R.drawable.char2
-                this.charMain = R.drawable.char2
+                this.charBljr = R.drawable.char2belajar
+                this.charMain = R.drawable.char2main
             }
             R.drawable.char3 -> {
                 this.charTidur = R.drawable.char3tidur
                 this.charMakan = R.drawable.char3makan
-                this.charBljr = R.drawable.char3
-                this.charMain = R.drawable.char3
+                this.charBljr = R.drawable.char3belajar
+                this.charMain = R.drawable.char3main
             }
         }
     }
@@ -58,9 +58,18 @@ class onClickHandler(val binding: ActivityInGameBinding, val char: Int, val cont
                 minMain()
                 if(progressMain <= 0){
                     progressMain = 0
+                    val saveData = context.getSharedPreferences("dataGame", MODE_PRIVATE).edit()
+                    saveData?.clear()
+                    saveData?.apply()
+                    saveFlag = false
+                    val intent =  Intent(context, Kalah::class.java)
+                    intent.putExtra("alasan", "Kamu mati karena stress dan bunuh diri")
+                    context.startActivity(intent)
                 }else if(flagMain == true && progressMain < 20){
                     flagMain = false
-                    Toast.makeText(context, "Kamu sangat sedih", Toast.LENGTH_LONG).show()
+                    toast?.cancel()
+                    toast.setText("Kamu sangat sedih")
+                    toast.show()
                 }else{
                     flagMain = true
                 }
@@ -74,10 +83,18 @@ class onClickHandler(val binding: ActivityInGameBinding, val char: Int, val cont
                 minTidur()
                 if(progressTidur <= 0){
                     progressTidur = 0
+                    val saveData = context.getSharedPreferences("dataGame", MODE_PRIVATE).edit()
+                    saveData?.clear()
+                    saveData?.apply()
+                    saveFlag = false
+                    val intent =  Intent(context, Kalah::class.java)
+                    intent.putExtra("alasan", "Kamu mati karena tidak tidur")
+                    context.startActivity(intent)
                 }else if(flagTidur == true && progressTidur < 20){
                     flagTidur = false
-                    Toast.makeText(context, "Kamu kurang tidur", Toast.LENGTH_LONG).show()
-
+                    toast?.cancel()
+                    toast.setText("Kamu Kurang Tidur")
+                    toast.show()
                 }else{
                     flagTidur = true
                 }
@@ -86,15 +103,24 @@ class onClickHandler(val binding: ActivityInGameBinding, val char: Int, val cont
     }
 
     fun intervalMakan() {
+
         waktuMakan.setInterval({
             runOnUiThread() {
                 minMakan()
                 if (progressMakan <= 0) {
                     progressMakan = 0
-
+                    val saveData = context.getSharedPreferences("dataGame", MODE_PRIVATE).edit()
+                    saveData?.clear()
+                    saveData?.apply()
+                    saveFlag = false
+                    val intent =  Intent(context, Kalah::class.java)
+                    intent.putExtra("alasan", "Kamu mati kelaparan")
+                    context.startActivity(intent)
                 } else if (flagMakan == true && progressMakan < 20) {
                     flagMakan = false
-                    Toast.makeText(context, "Kamu Lapar", Toast.LENGTH_LONG).show()
+                    toast?.cancel()
+                    toast.setText("Kamu lapar")
+                    toast.show()
                 } else {
                     flagMakan = true
                 }
@@ -111,7 +137,7 @@ class onClickHandler(val binding: ActivityInGameBinding, val char: Int, val cont
 
     fun onMakan(){
         plusMakan()
-        plusMain()
+        plusMain(5)
         binding.character.setImageResource(charMakan)
         TimerService.setTimeout({binding.character.setImageResource(char)},3000)
     }
@@ -123,22 +149,33 @@ class onClickHandler(val binding: ActivityInGameBinding, val char: Int, val cont
         TimerService.setTimeout({binding.character.setImageResource(char)},3000)
     }
 
-    fun onStudy(waktuDo : TimerService){
+    fun onStudy(waktuDo : TimerService, waktuAlertDo:TimerService){
         minMakan()
+        minMain(5)
+        progressBljr+=10
         if (progressBljr >= maxBljr){
             progressBljr = 0
-        }else{
-            progressBljr+=10
         }
         binding.barBelajar.progress = progressBljr
         binding.semester.setText(String.format("Semester %d", semester))
         waktuDo.resetTimeOut()
+        waktuAlertDo.resetTimeOut()
         binding.character.setImageResource(charBljr)
         TimerService.setTimeout({binding.character.setImageResource(char)},3000)
-        waktuDo.setTimeout({Toast.makeText(context, "Kamu DI DO", Toast.LENGTH_LONG).show()},60000)
+        waktuDo.setTimeout({toast?.cancel()
+            toast.setText( "Kamu akan di DO jika tidak belajar")
+            toast.show()},30000)
+
+        waktuAlertDo.setTimeout({
+            toast?.cancel()
+            val saveData = context.getSharedPreferences("dataGame", MODE_PRIVATE).edit()
+            saveData?.clear()
+            saveData?.apply()
+            saveFlag = false
+            val intent =  Intent(context, Kalah::class.java)
+            intent.putExtra("alasan", "Kamu di DO karena tidak belajar")
+            context.startActivity(intent)}, 60000)
     }
-
-
 
     fun plusMakan(){
         progressMakan+=20
@@ -146,8 +183,8 @@ class onClickHandler(val binding: ActivityInGameBinding, val char: Int, val cont
         binding.barMakan.setProgress(progressMakan)
     }
 
-    fun plusMain(){
-        progressMain+=10
+    fun plusMain(plus: Int = 10){
+        progressMain+=plus
         if(progressMain > 100) progressMain = 100
         binding.barMain.setProgress(progressMain)
     }
@@ -168,8 +205,8 @@ class onClickHandler(val binding: ActivityInGameBinding, val char: Int, val cont
         binding.barMakan.setProgress(progressMakan)
     }
 
-    fun minMain(){
-        progressMain-=2
+    fun minMain(min: Int = 2){
+        progressMain-=min
         binding.barMain.setProgress(progressMain)
     }
 }

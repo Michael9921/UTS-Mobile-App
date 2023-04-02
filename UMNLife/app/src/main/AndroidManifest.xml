@@ -6,7 +6,7 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/logo_umn"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.UMNLife"
@@ -15,10 +15,22 @@
             android:name=".ActivityQuiz"
             android:exported="true"
             android:screenOrientation="landscape" />
+        <activity android:name=".Rules"
+            android:exported="true"
+            android:screenOrientation="landscape" />
         <activity
             android:name=".ActivityInGame"
             android:exported="true"
             android:screenOrientation="landscape" />
+        <activity android:name=".Menang"
+            android:exported="true"
+            android:screenOrientation="landscape"/>
+        <activity android:name=".Kalah"
+            android:exported="true"
+            android:screenOrientation="landscape"/>
+        <activity android:name=".InfoGame"
+            android:exported="true"
+            android:screenOrientation="landscape"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

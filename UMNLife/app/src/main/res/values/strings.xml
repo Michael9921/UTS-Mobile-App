@@ -26,4 +26,21 @@
         <item>"17"</item>
         <item>"18"</item>
     </string-array>
+
+    <string name="info_game">
+        Created by:\n
+        1. 00000042678 - Michael Christian Dharmawan\n
+        2. 00000044537- Kevin Fernando Wijaya Sumargo\n
+        3. 00000044665 - Farren Yazid Pasha\n
+        4. 000000055136 - Koong Hiap
+    </string>
+
+    <string name="rule">
+        1. You must do learning activities so that you can level up, if you don\'t do learning activities then you will be dropped out.\n\n
+        2. You will be given quizzes as you learn, these quizzes will increase your semester if your answers are correct.\n\n
+        3. When you study, you can get hungry and tired.\n\n
+        4. You must play to make your character happy, but your character can be tired and hungry, so you have to eat and sleep.\n\n
+        5. If one of the existing health bar is reduced to empty you will die.\n
+        6. You have to study until past the 8th semester to win
+    </string>
 </resources>

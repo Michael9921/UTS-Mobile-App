@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import com.example.umnlife.TimerService.Companion.setTimeout
 import com.example.umnlife.databinding.ActivityInGameBinding
 
 
@@ -27,6 +28,7 @@ class ActivityInGame: AppCompatActivity() {
     private var time = 0
     private var hours = 0
     private val waktuDo = TimerService()
+    private val waktuAlertDo = TimerService()
     private var mMediaPlayer: MediaPlayer? = null
     private var timeDesc:Int = 0
     private var char:Int = 0
@@ -35,7 +37,9 @@ class ActivityInGame: AppCompatActivity() {
     private var putarWaktu = TimerService()
     private var saveData: SharedPreferences.Editor? = null
     private var getSaveData: SharedPreferences? = null
-    private var saveFlag = true;
+    protected var saveFlag = true;
+    protected var activitas = "main"
+    val alarmTime = TimerService()
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,14 +55,14 @@ class ActivityInGame: AppCompatActivity() {
             clickFUnc.progressTidur = savedInstanceState.getInt(KEY_TIDUR, 50)
             clickFUnc.progressMain = savedInstanceState.getInt(KEY_MAIN, 50)
             clickFUnc.progressBljr = savedInstanceState.getInt(KEY_BLJR, 0)
+            activitas = savedInstanceState.getString("AKTIFITAS", null)
             char = savedInstanceState.getInt(KEY_CHAR)
             name = savedInstanceState.getString(KEY_NAME).toString()
             clickFUnc = onClickHandler(binding, char, this)
-
         }else{
             getSaveData = getSharedPreferences("dataGame", MODE_PRIVATE)
             if(getSaveData?.contains("NAMA") == true){
-                defaultValue()
+                defaultValue(false)
                 clickFUnc = onClickHandler(binding, char, this)
                 clickFUnc.progressMakan = getSaveData?.getInt("MAKAN", 50)!!
                 clickFUnc.progressMain = getSaveData?.getInt("MAIN", 50)!!
@@ -66,24 +70,27 @@ class ActivityInGame: AppCompatActivity() {
                 clickFUnc.progressBljr = getSaveData?.getInt("BLJR", 0)!!
                 time = getSaveData?.getInt("TIME", 0)!!
                 clickFUnc.semester = getSaveData?.getInt("SEMESTER", 1)!!
+                activitas = getSaveData?.getString("AKTIVITAS", null)!!
+                binding.barBelajar.progress = clickFUnc.progressBljr
             }else{
-                defaultValue()
+                defaultValue(true)
                 clickFUnc = onClickHandler(binding, char, this)
             }
 
         }
 
         binding.buttonBljr.setOnClickListener{
-            clickFUnc.onStudy(this.waktuDo)
+            activitas = "belajar"
+            clickFUnc.onStudy(this.waktuDo, this.waktuAlertDo)
             if(clickFUnc.progressBljr == 0){
                 val intent =  Intent(this, ActivityQuiz::class.java)
                 startActivity(intent)
             }
         }
 
-
-
         binding.buttonTidur.setOnClickListener{
+            alarmTime.resetTimeOut()
+            activitas = "tidur"
             binding.viewPopUp.visibility = View.VISIBLE
             Frezze()
             val popupWindow = PopupWindow(this)
@@ -105,30 +112,60 @@ class ActivityInGame: AppCompatActivity() {
             })
 
             btnAlrm?.setOnClickListener {
-                popupWindow.dismiss()
-                binding.viewPopUp.visibility = View.GONE
-                time = (60 * (autoInput.text.toString().toIntOrNull() ?: 0))
-                clickFUnc.onTidur()
-                goAgain()
+                if(autoInput.text.toString().toIntOrNull() == null){
+                    popupWindow.dismiss()
+                    binding.viewPopUp.visibility = View.GONE
+                    goAgain()
+                }else{
+                    popupWindow.dismiss()
+                    binding.viewPopUp.visibility = View.GONE
+                    time = (60 * (autoInput.text.toString().toInt()))
+                    clickFUnc.onTidur()
+                    if(mMediaPlayer != null) {
+                        mMediaPlayer!!.release()
+                        mMediaPlayer = null
+                    }
+                    playSound(R.raw.alarm)
+                    timeDesc = 0
+
+                    alarmTime.setTimeout({
+                        if(mMediaPlayer != null) {
+                            mMediaPlayer!!.release()
+                            mMediaPlayer = null
+                        }
+                        goAgain()
+                        alarmTime.resetTimeOut()}, 3000)
+                }
             }
 
-            // remove the view from its parent if it has one
             (viewPopUp.parent as? ViewGroup)?.removeView(viewPopUp)
             popupWindow.showAtLocation(binding.root, Gravity.CENTER, 0, 0)
         }
 
+        binding.buttonMain.setOnClickListener{
+            activitas = "main"
+            clickFUnc.onMain()
+        }
+        binding.buttonMakan.setOnClickListener{
+            activitas = "makan"
+            clickFUnc.onMakan()
+        }
+
         binding.imageButtonInfo.setOnClickListener {
-            saveData = getSharedPreferences("dataGame", MODE_PRIVATE).edit()
-            saveData?.clear()
-            saveData?.apply()
-            saveFlag = false
-            val Intent =  Intent(this, MainActivity::class.java);
+            val Intent =  Intent(this, InfoGame::class.java);
             startActivity(Intent)
+        }
+
+        binding.buttonRule.setOnClickListener{
+            playSound(R.raw.open_book)
+            val IntentRule =  Intent(this, Rules::class.java);
+            startActivity(IntentRule)
         }
     }
 
     private fun countDownDO() {
-        waktuDo.setTimeout({ Toast.makeText(this, "Kamu DI DO", Toast.LENGTH_LONG).show()},60000)
+        waktuDo.setTimeout({ Toast.makeText(this, "Kamu akan di DO jika tidak belajar", Toast.LENGTH_LONG).show()},30000)
+        waktuAlertDo.setTimeout({ Toast.makeText(this, "Kamu DI DO", Toast.LENGTH_LONG).show()},60000)
     }
 
     private fun waktuJalan() {
@@ -159,7 +196,7 @@ class ActivityInGame: AppCompatActivity() {
         mMediaPlayer!!.start()
     }
 
-    fun defaultValue(){
+    fun defaultValue(save: Boolean){
         if(intent.getStringExtra("char") != null){
                 char = intent.getStringExtra("char")!!.toInt()
         }else{
@@ -178,37 +215,75 @@ class ActivityInGame: AppCompatActivity() {
             name = getSaveData?.getString("NAMA", name).toString()
         }
         binding.name.text = name
-        binding.bagroundInnerGame.setImageResource(R.drawable.bgmalam)
-        SalamToast(this).showCustomToast("Selamat Malam",this)
-        playSound(R.raw.musikmalam)
+
+       if(save){
+           binding.bagroundInnerGame.setImageResource(R.drawable.kamar_malam)
+           SalamToast(this).showCustomToast("Selamat Malam " + name, this)
+           playSound(R.raw.musikmalam)
+       }
+        countDownDO()
     }
 
-    private fun tampilWaktu(){
+    private fun tampilWaktu() {
         val salam:String
-        val bg:Int
         val sound:Int
+        val bg: Int
         when((time/60)%24){
             in 4 until 10 -> {
                 salam ="Selamat Pagi "+ name
-                bg = R.drawable.bgpagi
                 sound = R.raw.musikpagi
             }
             in 10 until 14 -> {
                 salam = "Selamat Siang "+ name
-                bg = R.drawable.bgsiang
                 sound = R.raw.musiksiang
             }
             in 14 until 16 -> {
                 salam = "Selamat Sore "+ name
-                bg = R.drawable.bgsore
                 sound = R.raw.musiksore
             }
             else -> {
                 salam = "Selamat Malam "+ name
-                bg = R.drawable.bgmalam
                 sound = R.raw.musikmalam
             }
         }
+
+
+        when((time/60)%24){
+            in 4 until 10 ->{
+                when(activitas){
+                    "main"-> bg = R.drawable.tamu_pagi
+                    "makan"-> bg = R.drawable.dapur_pagi
+                    "tidur"->bg = R.drawable.kamar_pagi
+                    else -> bg = R.drawable.kelas_pagi
+                }
+            }
+            in 10 until 14 -> {
+                when (activitas) {
+                    "main" -> bg = R.drawable.tamu_siang
+                    "makan" -> bg = R.drawable.dapur_siang
+                    "tidur" -> bg = R.drawable.kamar_siang
+                    else -> bg= R.drawable.kelas_siang
+                }
+            }
+            in 14 until 16 ->{
+                when(activitas){
+                    "main"-> bg = R.drawable.tamu_sore
+                    "makan"-> bg = R.drawable.dapur_sore
+                    "tidur"-> bg = R.drawable.kamar_sore
+                    else -> bg = R.drawable.kelas_sore
+                }
+            }
+            else -> {
+                when (activitas) {
+                    "main" -> bg = R.drawable.tamu_malam
+                    "makan" -> bg = R.drawable.dapur_malam
+                    "tidur" -> bg = R.drawable.kamar_malam
+                    else -> bg = R.drawable.kelas_malam
+                }
+            }
+        }
+
+
         if(time/60 != this.hours || mMediaPlayer == null){
             binding.bagroundInnerGame.setImageResource(bg)
             SalamToast(this).showCustomToast(salam,this)
@@ -231,6 +306,7 @@ class ActivityInGame: AppCompatActivity() {
         outState.putInt("TIME", time)
         outState.putString(KEY_NAME, name)
         outState.putInt(KEY_CHAR, char)
+        outState.putString("AKTIFITAS", activitas)
     }
 
     fun goAgain(){
@@ -244,6 +320,7 @@ class ActivityInGame: AppCompatActivity() {
     fun Frezze(){
         putarWaktu.resetInterval()
         waktuDo.resetTimeOut()
+        waktuAlertDo.resetTimeOut()
         clickFUnc.waktuMain.resetInterval()
         clickFUnc.waktuTidur.resetInterval()
         clickFUnc.waktuMakan.resetInterval()
@@ -261,14 +338,29 @@ class ActivityInGame: AppCompatActivity() {
             binding.semester.setText(String.format("Semester %d", clickFUnc.semester))
         }
 
+        if(clickFUnc.semester > 8){
+            Frezze()
+            saveData = getSharedPreferences("dataGame", MODE_PRIVATE).edit()
+            saveData?.clear()
+            saveData?.apply()
+//            if(mMediaPlayer != null) {
+//                mMediaPlayer!!.release()
+//                mMediaPlayer = null
+//            }
+            saveFlag = false;
+            val intent =  Intent(this, Menang::class.java)
+            startActivity(intent)
+        }
     }
     override fun onStop() {
         super.onStop()
         saveData = getSharedPreferences("dataGame", MODE_PRIVATE).edit()
         Frezze()
-        mMediaPlayer!!.release()
-        mMediaPlayer = null
-        if(saveFlag){
+        if(mMediaPlayer != null) {
+            mMediaPlayer!!.release()
+            mMediaPlayer = null
+        }
+        if(saveFlag && clickFUnc.saveFlag){
             saveData?.putInt("MAKAN", clickFUnc.progressMakan)
             saveData?.putInt("MAIN", clickFUnc.progressMain)
             saveData?.putInt("BLJR", clickFUnc.progressBljr)
@@ -277,8 +369,8 @@ class ActivityInGame: AppCompatActivity() {
             saveData?.putInt("SEMESTER", clickFUnc.semester)
             saveData?.putInt("CHAR", char)
             saveData?.putString("NAMA", name)
+            saveData?.putString("AKTIVITAS", activitas)
             saveData?.apply()
         }
-
     }
 }
