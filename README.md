@@ -84,6 +84,7 @@ Background dan lagu:
 
 - Selain dari jam background akan berganti terhadap kegiatan yang ada seperti ketika main, belajar, tidur, dan makan. 
 - Tetapi background yang menyesuaikan aktifitas hanya akan bergati 1 jam sekali atau berganti page activity dan kembali kedalam game.
+- Background aktifitas juga akan bergantung pada jam jadi total pada game ini akan ada 16 background.
 - lagu akan berputas mengikuti waktu yang ada diatas
 
 
