@@ -9,7 +9,7 @@ import android.widget.Toast
 import com.example.umnlife.databinding.ActivityInGameBinding
 
 class onClickHandler(val binding: ActivityInGameBinding, val char: Int, val context: Context): Activity() {
-    public var semester = 8
+    public var semester = 1
     public var progressMakan = 50
     public var progressTidur = 50
     public var progressMain = 50
